@@ -1,4 +1,24 @@
-const mysql = require('mysql');
+const express = require('express');
+
+const responseTime = require('response-time');
+
+const usersRouter = require('./cache.router');
+
+const app = express();
+
+app.use(express.json());
+
+app.use(responseTime());
+
+app.use('/download-excel', usersRouter);
+
+const PORT = process.env.PORT || 443;
+
+app.listen(PORT, console.log(`server listen on port ${PORT}`));
+
+
+
+/*const mysql = require('mysql');
 const excel = require('exceljs');
 const Pool = require("pg").Pool;
 
@@ -7,15 +27,17 @@ const Pool = require("pg").Pool;
 // Create a connection to the database
 const con = new Pool({
   host: "localhost",
-  user: "jhonv",
-  database: "IBMFONDO",
-  password: "diana",
+  user: "postgres",
+  database: "testdb",
+  password: "admin",
   port: 5432
-});
+});*/
+
+
 
 
 // open the PostgreSQL connection
-con.connect((err, client, done) => {
+/*con.connect((err, client, done) => {
     if (err) throw err;
   
     client.query("SELECT * FROM users", (err, res) => {
@@ -35,20 +57,17 @@ con.connect((err, client, done) => {
           ); //creating worksheet
 
         
-        worksheet.getRow(7).values = ['Id', 'codigos', 'Nombres', 'Primer apellido', 
-                                      'Segundo Apellido','Numeros de identificación',
+        worksheet.getRow(7).values = ['Item', 'codigos', 'Nombres y Apellidos','Numeros de identificación',
                                       'Estado Civil','Fecha de nacimiento', 'edad' ];
         //  WorkSheet Header
 		worksheet.columns = [
-            {  key: 'users_id',width: 10},
-            {  key: 'codigos',width: 10},
-			{  key: 'nombres', width: 30 },
-			{  key: 'primer_apellidos', width: 30},
-            {  key: 'segundo_apellidos', width: 30},
-            {  key: 'numeros_de_identificacion', width: 30},
+            { key:'item', width: 10},
+            {  key: 'codigo',width: 10},
+            {key: 'fullname', width:30},
+            {  key: 'numero_de_identificacion', width: 30},
             {  key: 'estado_civil', width: 30},
-            {  key: 'fechas_de_nacimiento', width: 30},
-            {  width: 30}
+            {  key: 'fecha_de_nacimiento', width: 30},
+            {  key: 'edad',width: 30}
 		]; 
         // fill the cell with BLUE
             ['A7',
@@ -93,9 +112,28 @@ con.connect((err, client, done) => {
 
         //add autofilters
         worksheet.autoFilter = 'A7:I7';
+
+        function calcularEdad(fecha) {
+          var hoy = new Date();
+          var cumpleanos = new Date(fecha);
+          var edad = hoy.getFullYear() - cumpleanos.getFullYear();
+          var m = hoy.getMonth() - cumpleanos.getMonth();
+      
+          if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+              edad--;
+          }
+      
+          return edad;
+      }
     
         // Add Array Rows.
-        worksheet.addRows(jsonData);
+        jsonData.forEach((item, i) => {
+          item.item = i+1;
+          item.fullname = item.primer_apellido+' '+item.segundo_apellido+' '+item.nombres;
+          item.edad = calcularEdad(item.fecha_de_nacimiento);
+          worksheet.addRow(item);
+        });
+        //worksheet.addRows(jsonData);
         //Front
         workbook.creator = 'IBM';
 
@@ -108,4 +146,4 @@ con.connect((err, client, done) => {
     }
       
     });
-  });
+  });*/
