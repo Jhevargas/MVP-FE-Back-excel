@@ -85,7 +85,8 @@ con.connect((err, client, done) => {
 
         worksheet.mergeCells('A4', 'I5');
         var mes = 'Agosto';
-        worksheet.getCell('A4').value = ' Anexo formulario ingreso poliza exequias del mes de '+ mes +'2021 ';
+        var ano = '2022';
+        worksheet.getCell('A4').value = ' Anexo formulario ingreso poliza exequias del mes de '+ mes + ano;
         worksheet.getCell('A4').border ={
             bottom: {style:'thick', color: {argb:'00000000'}}
         }
