@@ -44,7 +44,7 @@ function getExcel(workbook, response) {
         
           
           workbook = new excel.Workbook(); //creating workbook
-          let worksheet = workbook.addWorksheet('users', 
+          let worksheet = workbook.addWorksheet('INCLUSIONES', 
             {pageSetup:{paperSize: 9, orientation:'landscape'}},
             {headerFooter: {oddFooter: "Page &P of &N", oddHeader: 'Odd Page'}}
             ); //creating worksheet
@@ -54,13 +54,13 @@ function getExcel(workbook, response) {
                                         'Estado Civil','Fecha de nacimiento', 'edad' ];
           //  WorkSheet Header
       worksheet.columns = [
-              { key:'item', width: 10},
+              { key:'item', width: 7},
               {  key: 'codigo',width: 10},
-              {key: 'fullname', width:30},
-              {  key: 'numero_de_identificacion', width: 30},
-              {  key: 'estado_civil', width: 30},
-              {  key: 'fecha_de_nacimiento', width: 30},
-              {  key: 'edad',width: 30}
+              {key: 'fullname', width:40},
+              {  key: 'numero_de_identificacion', width: 25},
+              {  key: 'estado_civil', width: 20},
+              {  key: 'fecha_de_nacimiento', width: 20},
+              {  key: 'edad',width: 20}
       ]; 
           // fill the cell with BLUE
               ['A7',
@@ -79,14 +79,14 @@ function getExcel(workbook, response) {
           });
 
           //header
-          worksheet.mergeCells('D2', 'E2');
+          //worksheet.mergeCells('D2', 'E2');
           worksheet.getCell('D2').value = ' Fecha envío ';
           worksheet.getCell('D2').border ={
               bottom: {style:'thick', color: {argb:'00000000'}}
           }
           var registro = new Date();
-          worksheet.getCell('F2').value = registro;
-          worksheet.getCell('F2').border ={
+          worksheet.getCell('E2').value = registro;
+          worksheet.getCell('E2').border ={
               bottom: {style:'thick', color: {argb:'00000000'}}
           }
 
@@ -94,9 +94,10 @@ function getExcel(workbook, response) {
           worksheet.getCell('A3').value = ' Buenos días ';
 
           worksheet.mergeCells('A4', 'I5');
-          var mes = 'Agosto';
-          var ano = '2022';
-          worksheet.getCell('A4').value = ' Anexo formulario ingreso poliza exequias del mes de '+ mes + ano;
+          const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio","Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+          var mes = monthNames[registro.getMonth()];
+          var ano = registro.getFullYear();
+          worksheet.getCell('A4').value = ' Anexo formulario ingreso poliza exequias del mes de '+ mes +' '+ ano;
           worksheet.getCell('A4').border ={
               bottom: {style:'thick', color: {argb:'00000000'}}
           }
@@ -115,11 +116,12 @@ function getExcel(workbook, response) {
           workbook.creator = 'IBM';
 
           //Write to File.
-          var fileName = 'FileName.xlsx';
+          var fileName = 'INCLUSION-POLIZA-EXEQUIAL'+registro.getDate()+'-'+(registro.getMonth()+1)+'-'+registro.getFullYear()+'.xlsx';
           response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
           response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
 
           workbook.xlsx.write(response).then(function(){
+            
             response.end();
           });
           //workbook.xlsx.writeFile("Usuarios.xlsx")
